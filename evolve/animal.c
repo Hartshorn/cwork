@@ -1,11 +1,28 @@
 #include "animal.h"
 
+#define PLNTNRG   80
+#define REPNRG    200
 int plantc  = 0;
 int animalc = 0;
 
 void simulate_day(animal amls[], plant plts[])
 {
+  int a;
+  animal temp_animal;
   add_plants(plts);
+
+  for (a = 0; a < animalc; a++) {
+    if (amls[a].alive) {
+      turn_animal(&amls[a]);
+      move_animal(&amls[a], WIDTH, HEIGHT);
+      eat_animal(&amls[a], plts, PLNTNRG);
+      if (reproduce_animal(&amls[a], REPNRG)) {
+        temp_animal = copy_animal(amls[a]);
+        add_animal(&temp_animal, amls);
+      }
+      still_alive_animal(&amls[a]);
+    }
+  }
 }
 
 void draw_world(animal amls[], plant plts[])
