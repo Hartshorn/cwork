@@ -19,7 +19,7 @@ typedef struct {
 } plant;
 
 void gen_genes(int g[]);
-void add_animal(animal *a, animal amls[]);
+void add_animal(animal a, animal amls[]);
 void copy_genes(int *to, int *from);
 void mutate_gene(int genes[]);
 void show_animal(animal a);

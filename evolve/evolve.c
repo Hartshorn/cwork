@@ -23,13 +23,14 @@ int main()
     animal animal_a;
 
     init_animal(&animal_a);
-    add_animal(&animal_a, animals);
+    add_animal(animal_a, animals);
 
-    scanf("%d", &in_nbr);
-    for (i = 0; i < in_nbr; i++)
-      simulate_day(animals, plants);
+    while(true) {
+      scanf("%d", &in_nbr);
+      for (i = 0; i < in_nbr; i++)
+        simulate_day(animals, plants);
 
-    draw_world(animals, plants);
-
+      draw_world(animals, plants);
+    }
     return 0;
 }

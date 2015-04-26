@@ -5,26 +5,6 @@
 int plantc  = 0;
 int animalc = 0;
 
-void simulate_day(animal amls[], plant plts[])
-{
-  int a;
-  animal temp_animal;
-  add_plants(plts);
-
-  for (a = 0; a < animalc; a++) {
-    if (amls[a].alive) {
-      turn_animal(&amls[a]);
-      move_animal(&amls[a], WIDTH, HEIGHT);
-      eat_animal(&amls[a], plts, PLNTNRG);
-      if (reproduce_animal(&amls[a], REPNRG)) {
-        temp_animal = copy_animal(amls[a]);
-        add_animal(&temp_animal, amls);
-      }
-      still_alive_animal(&amls[a]);
-    }
-  }
-}
-
 void draw_world(animal amls[], plant plts[])
 {
   int x, y, a, p, has_animal, has_plant;
@@ -58,9 +38,9 @@ void draw_world(animal amls[], plant plts[])
     }
     printf("|");
   }
-  printf("\n");
-  printf("%d", animalc);
-  printf("%d", plantc);
+  printf("\n%d\n", animalc);
+  printf("%d\n", plantc);
+  show_animal(amls[animalc]);
 }
 
 void add_plants(plant plants[])
@@ -148,7 +128,7 @@ void eat_animal(animal *a, plant p[], int pe)
 bool reproduce_animal(animal *a, int rep_energy)
 {
     if (a->energy > rep_energy) {
-        a->energy /= 2;
+        a->energy = a->energy / 2;
         return true;
     }
     return false;
@@ -156,7 +136,10 @@ bool reproduce_animal(animal *a, int rep_energy)
 
 void still_alive_animal(animal *a)
 {
-    if (a->energy < 1) a->alive = false;
+    if (a->energy < 1) {
+      a->alive = false;
+      animalc--;
+    }
 }
 
 animal copy_animal(animal a)
@@ -165,7 +148,7 @@ animal copy_animal(animal a)
 
     b.x = a.x;
     b.y = a.y;
-    b.energy = 1000;
+    b.energy = 500;
     b.dir = (a.dir + 1) % 8;
     copy_genes(b.genes, a.genes);
     // gen_genes(b.genes);
@@ -175,9 +158,9 @@ animal copy_animal(animal a)
     return b;
 }
 
-void add_animal(animal *a, animal amls[])
+void add_animal(animal a, animal amls[])
 {
-    amls[animalc++] = *a;
+    amls[animalc++] = a;
 }
 
 void init_animal(animal *a)
@@ -188,4 +171,22 @@ void init_animal(animal *a)
     a->dir = 0;
     a->alive = true;
     gen_genes(a->genes);
+}
+
+void simulate_day(animal amls[], plant plts[])
+{
+  int a, c;
+  c = animalc;
+  add_plants(plts);
+
+  for (a = 0; a < c; a++) {
+    if (amls[a].alive) {
+      turn_animal(&amls[a]);
+      move_animal(&amls[a], WIDTH, HEIGHT);
+      eat_animal(&amls[a], plts, PLNTNRG);
+      if(reproduce_animal(&amls[a], REPNRG))
+        add_animal(copy_animal(amls[a]), amls);
+      still_alive_animal(&amls[a]);
+    }
+  }
 }
